@@ -82,3 +82,12 @@ build/
 # ===== OS =====
 .DS_Store
 Thumbs.db
+
+# Large raw data (never commit)
+data/raw/*.log
+data/raw/*.zip
+data/raw/*.csv
+
+# General archives
+*.zip
+*.log
