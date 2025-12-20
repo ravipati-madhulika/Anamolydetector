@@ -2,9 +2,11 @@ from sqlalchemy.orm import Session
 from datetime import datetime, timedelta
 from collections import Counter, defaultdict
 from statistics import mean, pstdev
+
 from app.models.log import Log
 from app.models.anomaly import Anomaly
 from app.models.metric import Metric
+
 
 # Normalize severity keys
 SEVERITY_KEYS = ["low", "medium", "high", "critical"]
@@ -48,6 +50,7 @@ def aggregate_metrics(db: Session, days: int = 7):
         if sev in severity_count:
             severity_count[sev] += 1
 
+    # persist daily metric snapshot
     metric = Metric(
         total_logs=total,
         error_count=len(errors),
@@ -89,7 +92,7 @@ def get_top_errors(db: Session, hours: int = 48, limit: int = 10):
     counter = Counter([e.endpoint for e in errors])
     total_errors = len(errors)
 
-    result = [
+    return [
         {
             "endpoint": ep,
             "error_count": count,
@@ -97,8 +100,6 @@ def get_top_errors(db: Session, hours: int = 48, limit: int = 10):
         }
         for ep, count in counter.most_common(limit)
     ]
-
-    return result
 
 
 # ==========================================================
